@@ -3,8 +3,7 @@ import { Icon } from "semantic-ui-react";
 
 import { db } from "../firebase";
 import LoadingCardView from "./LoadingCardView";
-
-import moonScaffold from "../moonScaffold.jpg";
+import OrganisationFeed from "./OrganisationFeed";
 
 class OrganisationPage extends React.Component {
   state = {
@@ -15,17 +14,18 @@ class OrganisationPage extends React.Component {
 
   componentDidMount() {
     const match = this.props.match;
-    console.log(match);
     db.getOrganisation(match.params.organisationId).then(
-      ({ name, hoursGenerated }) => {
-        this.setState({ name, hoursGenerated, loading: false });
-        console.log(this.state);
+      ({ name, hoursGenerated, mealsProvided, photo }) => {
+        this.setState({ name, hoursGenerated, mealsProvided, photo, loading: false });
       }
     );
   }
 
   render() {
-    return (
+    const match = this.props.match;
+    const organisationId = match.params.organisationId;
+
+    return <Fragment>
       <LoadingCardView
         loading={this.state.loading}
         header={this.state.name || ""}
@@ -34,14 +34,15 @@ class OrganisationPage extends React.Component {
             ? this.state.hoursGenerated + " Total people helped"
             : ""
         }
-        image={moonScaffold}
+        image={ this.state.photo }
         extra={
           <Fragment>
             <Icon name="group" /> Group
           </Fragment>
         }
       />
-    );
+      <OrganisationFeed orgId={organisationId} />
+    </Fragment>;
   }
 }
 

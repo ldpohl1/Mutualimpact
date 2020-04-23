@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import "./TimeLoggingForm.css";
 import { Form, Button, Message, List } from "semantic-ui-react";
+import ImageUpload from './Forms/ImageUpload';
 
 import { db } from "../firebase";
 import { token } from "../firebase";
@@ -11,7 +12,9 @@ const INITIAL_FIELDS = {
   task: "",
   orgIndex: "",
   time: "",
-  dateOfLabour: null
+  meals: "",
+  photo: "",
+  dateOfLabour: "",
 };
 
 class TimeLoggingForm extends Component {
@@ -25,7 +28,9 @@ class TimeLoggingForm extends Component {
       loading: true,
       submitting: false,
       error: null,
-      success: false
+      success: false,
+      isUploading: false,
+      uploadError: false,
     };
   }
 
@@ -49,12 +54,14 @@ class TimeLoggingForm extends Component {
   };
 
   logHours = () => {
-    var { task, orgIndex, time, dateOfLabour } = this.state.fields;
-    const org = this.state.organisations[orgIndex];
+    var { task, orgIndex, time, meals, dateOfLabour, photo = '' } = this.state.fields;
+    const org = this.state.organisations[ orgIndex ];
 
     return token.requestTokens(org, this.props.user, {
       loggedHours: time,
+      mealsProvided: meals,
       description: task,
+      photo,
       dateOfLabour
     });
   };
@@ -83,7 +90,9 @@ class TimeLoggingForm extends Component {
 
   validate = () => {
     const isSome = x => x !== null && x !== "";
-    const fields = this.state.fields;
+    const fields = { ...this.state.fields };
+    // Remove optional fields.
+    delete fields.photo;
     const fieldValues = Object.values(fields);
     const fieldValuesAreSome = fieldValues.every(isSome);
     const timeFieldValid = this.validateTime(fields.time);
@@ -133,9 +142,11 @@ class TimeLoggingForm extends Component {
           value={this.state.fields.orgIndex}
           onChange={this.onFormChange}
         />
-        <h> Not there? </h>{" "}
-        <a href="https://forms.gle/KXQPG6gcuQsPSFXdA"> Add your group.</a>
-        <p />
+        <p>
+          Not there?
+          { " " }
+          <a href="https://forms.gle/KXQPG6gcuQsPSFXdA"> Add your group.</a>
+        </p>
         <Form.Input
           name="time"
           label="How many people did you help?"
@@ -144,11 +155,26 @@ class TimeLoggingForm extends Component {
           onChange={this.onFormChange}
         />
         <Form.Input
+          name="meals"
+          label="How many meals did you provide?"
+          type="number"
+          value={this.state.fields.meals}
+          onChange={this.onFormChange}
+        />
+        <Form.Input
           name="dateOfLabour"
           label="When did you do this?"
           type="date"
           value={this.state.fields.dateOfLabour}
           onChange={this.onFormChange}
+        />
+        <ImageUpload
+          label="Upload a photo (optional)"
+          onUpload={ photo => this.setState( { isUploading: false, fields: { ...this.state.fields, photo } } ) }
+          prefix="log"
+          image={ this.state.fields.photo }
+          onStart={ () => this.setState({ isUploading: true, uploadError: false }) }
+          onError={ error => this.setState({ isUploading: false, uploadError: error }) }
         />
         <Message
           error
@@ -164,7 +190,7 @@ class TimeLoggingForm extends Component {
           fluid
           basic
           color="green"
-          disabled={!this.validate()}
+          disabled={!this.validate() || this.state.isUploading}
           loading={this.state.submitting}
         >
           Submit Request
