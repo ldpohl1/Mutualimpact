@@ -5,6 +5,8 @@ import { db } from "../firebase";
 import LoadingCardView from "./LoadingCardView";
 import OrganisationFeed from "./OrganisationFeed";
 
+import moonScaffold from "../moonScaffold.jpg";
+
 class OrganisationPage extends React.Component {
   state = {
     name: "",
@@ -15,8 +17,8 @@ class OrganisationPage extends React.Component {
   componentDidMount() {
     const match = this.props.match;
     db.getOrganisation(match.params.organisationId).then(
-      ({ name, hoursGenerated, mealsProvided, photo }) => {
-        this.setState({ name, hoursGenerated, mealsProvided, photo, loading: false });
+      ({ name, hoursGenerated }) => {
+        this.setState({ name, hoursGenerated, loading: false });
       }
     );
   }
@@ -34,7 +36,7 @@ class OrganisationPage extends React.Component {
             ? this.state.hoursGenerated + " Total people helped"
             : ""
         }
-        image={ this.state.photo }
+        image={moonScaffold}
         extra={
           <Fragment>
             <Icon name="group" /> Group

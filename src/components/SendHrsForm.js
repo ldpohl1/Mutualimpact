@@ -32,6 +32,7 @@ class SendHrsForm extends Component {
   };
 
   handleSubmit = () => {
+    console.log(this.state.fields);
     if (this.state.fields.user) {
       databaseController.sendHoursToUser(
         this.state.fields.user,

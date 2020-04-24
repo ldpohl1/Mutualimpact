@@ -4,7 +4,8 @@ import { Icon } from "semantic-ui-react";
 import { db } from "../../firebase";
 import LoadingCardView from "../LoadingCardView";
 import OrganisationFeed from '../OrganisationFeed';
-import { getImageSize } from '../../helpers';
+
+import moonScaffold from "../../moonScaffold.jpg";
 
 class OrganisationPage extends React.Component {
   state = {
@@ -12,20 +13,18 @@ class OrganisationPage extends React.Component {
     description: "",
     hoursGenerated: null,
     mealsProvided: null,
-    loading: true,
-    photo: null
+    loading: true
   };
 
   componentDidMount() {
     const match = this.props.match;
     db.getOrganisation(match.params.organisationId).then(
-      ({ name, hoursGenerated, mealsProvided, photo, description }) => {
+      ({ name, hoursGenerated, mealsProvided, description }) => {
         this.setState({
           name,
           hoursGenerated,
           mealsProvided,
           description,
-          photo,
           loading: false
         });
       }
@@ -48,7 +47,7 @@ class OrganisationPage extends React.Component {
           header={this.state.name || ""}
           description={this.state.description}
           meta={ meta.join(', ')}
-          image={ getImageSize( this.state.photo, 'square_md' ) }
+          image={moonScaffold}
           extra={
             <Fragment>
               <Icon name="group" />

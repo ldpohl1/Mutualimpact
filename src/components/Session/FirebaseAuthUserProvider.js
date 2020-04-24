@@ -30,8 +30,6 @@ export default class FirebaseAuthUserProvider extends React.Component {
             pendingUser: false,
             name: user.name,
             hours: user.hours,
-            meals: user.meals || 0,
-            photo: user.photo || "",
             role
           });
         });
@@ -43,9 +41,7 @@ export default class FirebaseAuthUserProvider extends React.Component {
           id: null,
           email: null,
           name: "Guest",
-          photo: "",
-          hours: "",
-          meals: "",
+          hours: ""
         }));
       }
     });

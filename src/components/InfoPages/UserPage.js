@@ -4,8 +4,7 @@ import { Icon } from 'semantic-ui-react';
 import LoadingCardView from '../LoadingCardView';
 import PersonalFeed from '../PersonalFeed';
 import { db } from '../../firebase'
-
-import { getImageSize } from '../../helpers';
+import userImage from '../../daniel.jpg'
 
 class UserPage extends React.Component {
 	state = {
@@ -18,8 +17,9 @@ class UserPage extends React.Component {
 	componentDidMount() {
 		const match = this.props.match;
 		db.getUser(match.params.userId)
-		.then(({name, hours, meals, photo}) => {
-			this.setState({ name, hours, meals, photo, loading: false });
+		.then(({name, hours, meals}) => {
+			this.setState({ name, hours, meals, loading: false });
+			console.log(this.state);
 		})
 	}
 
@@ -38,7 +38,7 @@ class UserPage extends React.Component {
 			<Fragment>
 				<LoadingCardView
 					loading={this.state.loading}
-					image={ getImageSize( this.state.photo, 'square_md' ) }
+					image={userImage}
 					header={this.state.name || ''}
 					meta={meta.join(', ')}
 					extra={<Fragment><Icon name='user' /> User</Fragment>}

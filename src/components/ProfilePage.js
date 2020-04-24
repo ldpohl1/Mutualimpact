@@ -1,13 +1,12 @@
 import React, { Fragment } from 'react';
-import { Link } from 'react-router-dom';
 
 import LoadingCardView from './LoadingCardView';
 import PersonalFeed from './PersonalFeed';
 import { FirebaseAuthUserContext } from './Session/FirebaseAuthUserProvider';
 import withAuthorization from './Session/withAuthorization';
 import { db } from '../firebase';
-import { PROFILE_EDIT } from '../constants/routes';
-import { getImageSize } from '../helpers';
+
+import nan from '../nan.jpg'
 
 class Profile extends React.Component {
 	state = {
@@ -27,7 +26,7 @@ class Profile extends React.Component {
 			user = {...this.state.user};
 		}
 		else {
-			user = { name: 'name', email: 'email', hours: 'NA', meals: 0, photo: null }
+			user = { name: 'name', email: 'email', hours: 'NA', meals: 0 }
 		}
 		const meta = [ `${ user.hours } people helped` ];
 		if ( user.meals ) {
@@ -39,10 +38,7 @@ class Profile extends React.Component {
 					loading={this.state.loading}
 					header={user.name}
 					meta={ meta.join(', ') }
-					image={ getImageSize(user.photo, 'square_md') }
-					description={
-						<Link to={PROFILE_EDIT}>Edit Profile</Link>
-					}
+					image={nan}
 				/>
 				<PersonalFeed userId={this.props.user.id} />
 			</Fragment>
